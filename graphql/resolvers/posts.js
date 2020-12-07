@@ -1,3 +1,5 @@
+const { AuthenticationError } = require('apollo-server');
+
 const Post = require('../../models/Post');
 const verifyAuth = require('../../util/verifyAuth');
 
@@ -39,6 +41,22 @@ module.exports = {
       const post = await newPost.save();
 
       return post;
+    },
+    async deletePost(_, { postId }, context) {
+      const user = verifyAuth(context);
+
+      try {
+        const post = await Post.findById(postId);
+
+        if (user.username === post.username) {
+          await post.delete();
+          return 'Post deleted';
+        } else {
+          throw new AuthenticationError('User does not own this post');
+        }
+      } catch (err) {
+        throw new Error(err);
+      }
     },
   },
 };

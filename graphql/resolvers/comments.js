@@ -43,5 +43,24 @@ module.exports = {
         throw new UserInputError('Post not found');
       }
     },
+    likePost: async (_, { postId }, context) => {
+      const { username } = verifyAuth(context);
+
+      const post = await Post.findById(postId);
+      if (post) {
+        if (post.likes.find((like) => like.username === username)) {
+          // If post is already liked, unlike it
+          post.likes = post.likes.filter((like) => like.username !== username);
+        } else {
+          // If post is not liked, like it
+          post.likes.push({
+            username,
+            createdAt: new Date().toISOString(),
+          });
+        }
+        await post.save();
+        return post;
+      } else throw new UserInputError('Post not found');
+    },
   },
 };

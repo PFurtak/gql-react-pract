@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 
 function PostCard({
-  post: { body, createdAt, id, username, likes, comments },
+  post: { body, createdAt, id, username, comments, likes },
 }) {
   function likePost() {
     console.log('Like post!!');
